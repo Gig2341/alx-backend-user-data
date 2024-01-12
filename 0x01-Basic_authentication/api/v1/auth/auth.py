@@ -6,6 +6,7 @@
 from flask import Flask, request
 from typing import List, TypeVar
 
+
 class Auth:
     """this represents the authentication
     """
@@ -18,9 +19,12 @@ class Auth:
         if path in excluded_paths:
             return False
         # Ensure that all paths in excluded_paths end with a slash
-        excluded_paths = [p if p.endswith('/') else p + '/' for p in excluded_paths]
+        excluded_paths = [
+                p if p.endswith('/') else p + '/' for p in excluded_paths
+        ]
         # Check if the path is in excluded_paths
         return path + '/' not in excluded_paths
+
     def authorization_header(self, request=None) -> str:
         """
         """
