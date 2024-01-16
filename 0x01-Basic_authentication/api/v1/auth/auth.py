@@ -12,18 +12,17 @@ class Auth:
     """
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """defines the require_auth method
-        """
-        if path is None or excluded_paths is None or not excluded_paths:
-            return True
-        if path in excluded_paths:
-            return False
-        # Ensure that all paths in excluded_paths end with a slash
-        excluded_paths = [
-                p if p.endswith('/') else p + '/' for p in excluded_paths
-        ]
-        # Check if the path is in excluded_paths
-        return path + '/' not in excluded_paths
+        ''' public method that checks which path requires auth '''
+        if path is not None and excluded_paths:
+            if not path.endswith('/'):
+                path += '/'
+            for excluded_path in excluded_paths:
+                if excluded_path.endswith('*') \
+                        and path.startswith(excluded_path[:-1]):
+                    return False
+                elif path == excluded_path:
+                    return False
+        return True
 
     def authorization_header(self, request=None) -> str:
         """defines the authorization hrader method
