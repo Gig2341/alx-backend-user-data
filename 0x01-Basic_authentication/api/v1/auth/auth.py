@@ -26,9 +26,13 @@ class Auth:
         return path + '/' not in excluded_paths
 
     def authorization_header(self, request=None) -> str:
+        """defines the authorization hrader method
         """
-        """
-        return None
+        if request is None:
+            return None
+        # get header from the request
+        header = request.headers.get('Authorization')
+        return header
 
     def current_user(self, request=None) -> TypeVar('User'):
         """
