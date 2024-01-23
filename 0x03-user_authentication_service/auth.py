@@ -20,9 +20,10 @@ def _hash_password(password: str) -> bytes:
 
     return hashed_password
 
+
 class Auth():
     '''the Auth class to interact with the authentication database'''
-    
+
     def __init__(self):
         '''initializes the class'''
         self._db = DB()
@@ -45,5 +46,5 @@ class Auth():
             pass
         code = _hash_password(password).decode('utf-8')
         new_user = self._db.add_user(email, code)
-            
+
         return new_user
