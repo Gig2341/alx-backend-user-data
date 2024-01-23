@@ -60,3 +60,41 @@ class DB:
         except InvalidRequestError as e:
             self._session.rollback()
             raise e
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Update a user in the database based on user_id and keyword arguments.
+        Args:
+            user_id (int): The user's ID to identify the user.
+            **kwargs: Arbitrary keyword arguments representing user attributes to update.
+        Raises:
+            NoResultFound: If no user is found with the provided user_id.
+            MultipleResultsFound: If multiple users are found with the same user_id (should not happen).
+            InvalidRequestError: If an invalid query is formed or other SQLAlchemy errors occur.
+            ValueError: If an argument does not correspond to a user attribute.
+        """
+        try: 
+            # find the user using user_id
+            user = self.find_user_by(id=user_id)
+
+            # Update user attributes
+            for key, value in kwargs.items():
+                if hasattr(User, key):
+                    setattr(user, key, value)
+                else:
+                    raise ValueError(f"Invalid user attribute: {key}")
+
+            # commit changes to database
+            self._session.commit()
+
+        except NoResultFound as e:
+            self._session.rollback()
+            raise e
+
+        except MultipleResultsFound as e:
+            self._session.rollback()
+            raise e
+
+        except InvalidRequestError as e:
+            self._session.rollback()
+            raise e
+
