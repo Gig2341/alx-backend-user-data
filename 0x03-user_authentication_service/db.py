@@ -72,7 +72,6 @@ class DB:
             SQLAlchemy errors occur.
             ValueError: If an argument does not correspond to a user attribute.
         """
-        
         # find the user using user_id
         user = self.find_user_by(id=user_id)
 
