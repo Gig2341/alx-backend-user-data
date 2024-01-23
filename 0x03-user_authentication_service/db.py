@@ -10,8 +10,7 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
 
-from user import Base
-from user import User
+from user import Base, User
 
 
 class DB:
@@ -52,14 +51,12 @@ class DB:
     def find_user_by(self, **kwargs: dict) -> User:
         '''
         '''
-        try:
-            user = self._session.query(User).filter_by(**kwargs).first()
-            if user is None:
-                raise NoResultFound("No user found")
-            return user
-        except InvalidRequestError as e:
-            self._session.rollback()
-            raise e
+        if not kwargs:
+            raise InvalidRequestError
+        user = self._session.query(User).filter_by(**kwargs).first()
+        if user is None:
+            raise NoResultFound
+        return user
 
     def update_user(self, user_id: int, **kwargs) -> None:
         """Update user in the database based on user_id and keyword arguments.
