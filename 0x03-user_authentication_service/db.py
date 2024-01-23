@@ -13,49 +13,50 @@ from sqlalchemy.orm.exc import NoResultFound
 from user import Base
 from user import User
 
+
 class DB:
-        """DB class
+    """DB class
+    """
+
+    def __init__(self) -> None:
+        """Initialize a new DB instance
         """
+        self._engine = create_engine("sqlite:///a.db", echo=True)
+        Base.metadata.drop_all(self._engine)
+        Base.metadata.create_all(self._engine)
+        self.__session = None
 
-        def __init__(self) -> None:
-            """Initialize a new DB instance
-            """
-            self._engine = create_engine("sqlite:///a.db", echo=True)
-            Base.metadata.drop_all(self._engine)
-            Base.metadata.create_all(self._engine)
-            self.__session = None
+    @property
+    def _session(self) -> Session:
+        """Memoized session object
+        """
+        if self.__session is None:
+            DBSession = sessionmaker(bind=self._engine)
+            self.__session = DBSession()
+        return self.__session
 
-        @property
-        def _session(self) -> Session:
-            """Memoized session object
-            """
-            if self.__session is None:
-                DBSession = sessionmaker(bind=self._engine)
-                self.__session = DBSession()
-            return self.__session
+    def add_user(self, email: str, hashed_password: str) -> User:
+        '''adds a new user object
+        Args:
+            email (str): User's email
+            hashed_password (str): User's hashed password
 
-        def add_user(self, email: str, hashed_password: str) -> User:
-            '''adds a new user object
-            Args:
-                email (str): User's email
-                hashed_password (str): User's hashed password
+        Returns:
+            User: The created User object
+        '''
+        new_user = User(email=email, hashed_password=hashed_password)
+        self._session.add(new_user)
+        self._session.commit()
+        return new_user
 
-            Returns:
-                User: The created User object
-            '''
-            new_user = User(email=email, hashed_password=hashed_password)
-            self._session.add(new_user)
-            self._session.commit()
-            return new_user
-
-        def find_user_by(self, **kwargs: dict) -> User:
-            '''
-            '''
-            try:
-                user = self._session.query(User).filter_by(**kwargs).first()
-                if user is None:
-                    raise NoResultFound("No user found")
-                return user
-            except InvalidRequestError as e:
-                self._session.rollback()
-                raise e
+    def find_user_by(self, **kwargs: dict) -> User:
+        '''
+        '''
+        try:
+            user = self._session.query(User).filter_by(**kwargs).first()
+            if user is None:
+                raise NoResultFound("No user found")
+            return user
+        except InvalidRequestError as e:
+            self._session.rollback()
+            raise e
