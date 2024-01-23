@@ -72,28 +72,16 @@ class DB:
             SQLAlchemy errors occur.
             ValueError: If an argument does not correspond to a user attribute.
         """
-        try:
-            # find the user using user_id
-            user = self.find_user_by(id=user_id)
+        
+        # find the user using user_id
+        user = self.find_user_by(id=user_id)
 
-            # Update user attributes
-            for key, value in kwargs.items():
-                if hasattr(User, key):
-                    setattr(user, key, value)
-                else:
-                    raise ValueError(f"Invalid user attribute: {key}")
+        # Update user attributes
+        for key, value in kwargs.items():
+            if hasattr(User, key):
+                setattr(user, key, value)
+            else:
+                raise ValueError(f"Invalid user attribute: {key}")
 
-            # commit changes to database
-            self._session.commit()
-
-        except NoResultFound as e:
-            self._session.rollback()
-            raise e
-
-        except MultipleResultsFound as e:
-            self._session.rollback()
-            raise e
-
-        except InvalidRequestError as e:
-            self._session.rollback()
-            raise e
+        # commit changes to database
+        self._session.commit()
