@@ -92,5 +92,5 @@ class Auth():
                 return user
             else:
                 return None
-        except NoResultError:
+        except NoResultFound:
             pass
