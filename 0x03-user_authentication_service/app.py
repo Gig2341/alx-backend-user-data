@@ -72,8 +72,8 @@ def reset_password():
         if reset_token:
             message = {"email": email, "reset_token": reset_token}
             return jsonify(message), 200
-        except Exception:
-            abort(403)
+    except Exception:
+        abort(403)
 
 
 @app.route("/reset_password", methods=["PUT"])
