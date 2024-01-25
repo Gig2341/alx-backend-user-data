@@ -70,7 +70,7 @@ def reset_password():
     reset_token = AUTH.get_reset_password_token(email)
     if reset_token is None:
         abort(403)
-    message = {"email": email, "reset_token": reset_token}
+    message = {"email": email, "reset_token": "reset_token"}
     return jsonify(message), 200
 
 
