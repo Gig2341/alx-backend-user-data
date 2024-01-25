@@ -70,7 +70,20 @@ def reset_password():
     reset_token = AUTH.get_reset_password_token(email)
     if reset_token is None:
         abort(403)
-    message = {"email": user.email, "reset_token": reset_token}
+    message = {"email": email, "reset_token": reset_token}
+    return jsonify(message), 200
+
+
+@app.route("/reset_password", methods=["PUT"])
+def update_password():
+    """route to update password of user"""
+    email = request.form['email']
+    reset_token = request.form['reset_token']
+    new_password = request.form['new_password']
+    AUTH.update_password(reset_token, new_password)
+    if reset_token is None:
+        abort(403)
+    message = {"email": email, "message": "Password updated"}
     return jsonify(message), 200
 
 
